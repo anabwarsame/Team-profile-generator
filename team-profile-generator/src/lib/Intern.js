@@ -13,4 +13,3 @@ class Intern extends Employee {
   }
 }
 let intern = new Intern("anab", 1234, "anab@gmail.com", "highschool");
-console.log(intern.getSchool());

@@ -7,14 +7,18 @@ class Employee {
   getName() {
     return this.name;
   }
-  getId() {}
-  getEmail() {}
+  getId() {
+    return this.id;
+  }
+  getEmail() {
+    return this.email;
+  }
+
   getRole() {
     return "Employee";
   }
 }
 
 let employee = new Employee("anab", 1234, "anab@gmail.com");
-console.log(employee.getRole());
 
 module.exports = Employee;

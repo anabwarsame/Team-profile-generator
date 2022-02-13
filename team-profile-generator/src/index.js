@@ -6,76 +6,82 @@ const Manager = require("./lib/Manager");
 const Intern = require("./lib/Intern");
 const Engineer = require("./lib/Engineer");
 
-const createHtml = (answer) => {
-  
-  return;
-};
-
+// const createHtml = (answer) => {
+//   return;
+// };
 
 // questions about team member
-const askTeamQuestions = () => {
-  inquirer
-  .prompt([
-    {
-      type: "input",
-      name: "team name",
-      message: "what is the name of your team?",
-    },
+const pickEmployeeQuestions = () => {
+  inquirer.prompt([
     {
       type: "list",
       message: "pick the type of employee:",
       name: "role",
-      choices: ["manager", "engineer", "intern"],
-    }])
-  //   .then((answer) => {
-  //     if (answer.manager) {
-        
-  //       getManagerQuestions();
-  //     } else {
-  //       console.log("You own", answer.pet_count, "pets");
-  //   })
+      choices: ["manager", "engineer", "intern", "quit"],
+    },
+  ]);
+};
 
-   
-  // ])
-  // .then((answer) => {
-  //   fs.writeFile(
-  //     "team-profile-generator.html",
-  //     createHtml(answer),
-  //     function (err) {
-  //       if (err) throw err;
-  //     }
-  //   );
-  // });
-  
+const askTeamQuestions = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "teamName",
+        message: "what is the name of your team?",
+      },
+    ])
+    .then((answer) => {
+      pickEmployeeQuestions();
+    });
+};
+
+//   .then((answer) => {
+//     if (answer.manager) {
+
+//       getManagerQuestions();
+//     } else {
+//       console.log("You own", answer.pet_count, "pets");
+//   })
+
+// ])
+// .then((answer) => {
+//   fs.writeFile(
+//     "team-profile-generator.html",
+//     createHtml(answer),
+//     function (err) {
+//       if (err) throw err;
+//     }
+//   );
+// });
+
 const getManagerQuestions = () => {
-
-  inquirer.prompt ([
+  inquirer.prompt([
     {
-        type: "input",
-        name: "managers name",
-        message: "enter manager's name?",
-      },
-      {
-        type: "input",
-        name: "id",
-        message: "enter manager employee id",
-      },
-      {
-        type: "input",
-        name: "email",
-        message: "enter manager email address",
-      },
-      {
-        type: "input",
-        name: "office number",
-        message: "enter manager office number",
-      },
-
-  ])
-}
+      type: "input",
+      name: "managers name",
+      message: "enter manager's name?",
+    },
+    {
+      type: "input",
+      name: "id",
+      message: "enter manager employee id",
+    },
+    {
+      type: "input",
+      name: "email",
+      message: "enter manager email address",
+    },
+    {
+      type: "input",
+      name: "office number",
+      message: "enter manager office number",
+    },
+  ]);
+};
 
 const getEngineerQuestions = () => {
-  inquirer.prompt ([
+  inquirer.prompt([
     {
       type: "input",
       name: "engineers name",
@@ -96,33 +102,33 @@ const getEngineerQuestions = () => {
       name: "github",
       message: "enter engineer's github",
     },
-
-  ])
-}
+  ]);
+};
 
 const getInternQuestions = () => {
-([
-  {
-    type: "input",
-    name: "interns name",
-    message: "enter intern's name?",
-  },
-  {
-    type: "input",
-    name: "id",
-    message: "enter intern employee id",
-  },
-  {
-    type: "input",
-    name: "email",
-    message: "enter intern email address",
-  },
-  {
-    type: "input",
-    name: "office number",
-    message: "enter intern office number",
-  },
-])}
+  [
+    {
+      type: "input",
+      name: "interns name",
+      message: "enter intern's name?",
+    },
+    {
+      type: "input",
+      name: "id",
+      message: "enter intern employee id",
+    },
+    {
+      type: "input",
+      name: "email",
+      message: "enter intern email address",
+    },
+    {
+      type: "input",
+      name: "office number",
+      message: "enter intern office number",
+    },
+  ];
+};
 
 const askNewQuestion = {
   type: "confirm",
@@ -136,81 +142,77 @@ const startApplication = async () => {
   let inProgress = true;
 
   while (inProgress) {
-    const {role} = await inquirer.prompt(askTeamQuestions);
-    
-    if ( role === "manager") {
-      const {name, id, email, officeNumber} = await inquirer.prompt(getManagerQuestions)
-    
+    const { role } = askTeamQuestions();
+
+    if (role === "manager") {
+      const { name, id, email, officeNumber } = await inquirer.prompt(
+        getManagerQuestions
+      );
+
       const newEmployee = new Manager(name, id, email, officeNumber);
       teamArray.push(newEmployee);
-    } else if ( role === "engineer") {
-      const {name, id, email, github} = await inquirer.prompt(getEngineerQuestions)
-    
+    } else if (role === "engineer") {
+      const { name, id, email, github } = await inquirer.prompt(
+        getEngineerQuestions
+      );
+
       const newEmployee = new Engineer(name, id, email, github);
       teamArray.push(newEmployee);
+    } else if (role === "intern") {
+      const { name, id, email, school } = await inquirer.prompt(
+        getInternQuestions
+      );
 
-    
-  } else if ( role === "intern") {
-    const {name, id, email, school} = await inquirer.prompt(getInternQuestions)
-  
-    const newEmployee = new Intern(name, id, email, school);
-    teamArray.push(newEmployee);
+      const newEmployee = new Intern(name, id, email, school);
+      teamArray.push(newEmployee);
 
-    const {exit} = await inquirer.prompt(askNewQuestion);
-
-
-}
-if (!exit) {
-  inProgress = false;
-}
-
-}
-writeToFile("src/index.html", generateTeam(teamArray));
+      const { exit } = await inquirer.prompt(askNewQuestion);
+    }
+    if (!exit) {
+      inProgress = false;
+    }
+  }
+  writeToFile("src/index.html", generateTeam(teamArray));
 };
 
-
 const generateEmployeeCards = (employees) => {
-
   let cards = [];
   for (let i = 0; i < employees.length; i++) {
     const teamArray = employees[i];
     switch (teamArray.getRole()) {
       case "manager":
-       
-      const manager = new Manager(
-        teamArray.id,
-        teamArray.name,
-        teamArray.email,
-        teamArray.officeNumber,
-      );
-      cards.push(generateManagerCard(manager));
-      break;
+        const manager = new Manager(
+          teamArray.id,
+          teamArray.name,
+          teamArray.email,
+          teamArray.officeNumber
+        );
+        cards.push(generateManagerCard(manager));
+        break;
 
       case "engineer":
-       
-      const engineer = new Engineer(
-        teamArray.id,
-        teamArray.name,
-        teamArray.email,
-        teamArray.github,
-      );
-      cards.push(generateEngineerCard(engineer));
-      break;
+        const engineer = new Engineer(
+          teamArray.id,
+          teamArray.name,
+          teamArray.email,
+          teamArray.github
+        );
+        cards.push(generateEngineerCard(engineer));
+        break;
 
       case "intern":
-       
-      const intern = new Intern(
-        teamArray.id,
-        teamArray.name,
-        teamArray.email,
-        teamArray.school,
-      );
-      cards.push(generateInternCard(intern));
-      break;
+        const intern = new Intern(
+          teamArray.id,
+          teamArray.name,
+          teamArray.email,
+          teamArray.school
+        );
+        cards.push(generateInternCard(intern));
+        break;
     }
   }
-  return cards.join(``)
-}
+  return cards.join(``);
+};
 
 let generateManagerCard = (Manager) => {
   return `
@@ -279,8 +281,8 @@ let generateInternCard = (Intern) => {
     </li>
   </ul>
 </div>
-  `
-}
+  `;
+};
 
 const generateTeam = (teamArray) => {
   return `
@@ -364,8 +366,7 @@ const generateTeam = (teamArray) => {
 const writeToFile = (filePath, data) => {
   try {
     fs.writeFileSync(filePath, data);
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
   }
 };
